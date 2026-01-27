@@ -228,13 +228,12 @@ func (m *qosContainerManagerImpl) setCPUCgroupConfig(configs map[v1.PodQOSClass]
 		bestEffortCPUShares := uint64(MinShares)
 		configs[v1.PodQOSBestEffort].ResourceParameters.CPUShares = &bestEffortCPUShares
 
-		// Clear any existing cpu.idle setting
-		if configs[v1.PodQOSBestEffort].ResourceParameters.Unified != nil {
-			delete(configs[v1.PodQOSBestEffort].ResourceParameters.Unified, Cgroup2CPUIdle)
-		}
-
-		// In cgroup v2 mode, also set cpu.idle=0 for consistency
 		if isCgroupV2 {
+			// Clear any existing cpu.idle setting
+			if configs[v1.PodQOSBestEffort].ResourceParameters.Unified != nil {
+				delete(configs[v1.PodQOSBestEffort].ResourceParameters.Unified, Cgroup2CPUIdle)
+			}
+			// In cgroup v2 mode, also set cpu.idle=0 for consistency
 			if configs[v1.PodQOSBestEffort].ResourceParameters.Unified == nil {
 				configs[v1.PodQOSBestEffort].ResourceParameters.Unified = make(map[string]string)
 			}
